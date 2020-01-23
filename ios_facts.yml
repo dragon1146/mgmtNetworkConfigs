@@ -12,7 +12,9 @@
       username: stison
       password: colourfulHoney46$
       host: usb1ab6secrtr1
-
+  
+  
+  
   tasks:
     - name: Task 01 using ios_facts module to get info from router
       ios_facts:
