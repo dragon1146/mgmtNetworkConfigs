@@ -2,14 +2,31 @@
 
 
 
-- name: Play no.01 Config OSPF on r1, r2 & advertise their networks
-  hosts: routers
+- name: Play 01 get info from router by using ios_facts
+  hosts: usb1ab6secrtr1
   connection: local
   gather_facts: no
 
+  vars:
+    cli:
+      username: stison
+      password: colourfulHoney46$
+      host: usb1ab6secrtr1
+
   tasks:
-     - name: task no.1 gather facts with ios_facts
-       ping:
+    - name: Task 01 using ios_facts module to get info from router
+      ios_facts:
+        provider: "{{ cli }}"
+      register: data
+
+
+    - name: Task 02 display router info using debug module
+      debug:
+        var: data
+
+
+
+
       #  ios_facts:
       #     provider:
       #        host: 172.16.11.11

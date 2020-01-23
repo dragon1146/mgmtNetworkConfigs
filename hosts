@@ -1,4 +1,8 @@
 [routers]
-r1
-r2
-172.16.11.11
+172.16.11.1
+172.16.11.2
+
+
+[av6Routers]
+usb1ab6secrtr1
+usb1ab6secrtr2
