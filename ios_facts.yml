@@ -1,0 +1,56 @@
+---
+
+
+
+- name: Play no.01 Config OSPF on r1, r2 & advertise their networks
+  hosts: routers
+  connection: local
+  gather_facts: no
+
+  tasks:
+     - name: task no.1 gather facts with ios_facts
+       ping:
+      #  ios_facts:
+      #     provider:
+      #        host: 172.16.11.11
+      #        port: 22
+      #        authorize: yes
+      #        auth_pass: cisco12345
+      #        username: tison
+      #        password: cisco12345
+       #register: ios_facts_data
+
+
+#      - name: task no. 2 display
+#        debug:
+#           var: ios_facts_data    
+
+
+
+
+
+   
+
+#   tasks:
+#      - name: Task no.03 Config Loopback Interface on r1 & r2
+#        with_items: "{{ ospfBasicConfig }}"
+#        ios_config:
+#           provider: "{{provider}}"
+#           lines:
+#              - int "{{ item.int }}"
+#              - ip add "{{ item.ip_addr }}"
+#              - desc "{{ item.desc }}"
+
+
+
+
+#      - name: Task no.04 Config OSPF on r1 & r2 with process ID 11
+#        with_items: "{{ ospfConfigInfo }}"
+#        ios_config:
+#           provider: "{{provider}}"
+#           lines:
+#              - networks "{{ advNet00 }}" 0.0.0.0 area 0
+#              - networks "{{ advNet01 }}" 0.0.0.0 area 0
+#              - networks "{{ advNet02 }}" 0.0.0.0 area 0
+#           parent:
+#              - router ospf 11

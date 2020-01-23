@@ -1,0 +1,68 @@
+---
+
+
+
+- name: Play no.01 Config OSPF on r1, & advertise its networks
+  hosts: r1
+  connection: local
+  gather_facts: false
+
+
+
+  tasks:
+     - name: Task no.03 Config Loopback Interface on r1
+       ios_config:
+          provider: "{{ r1_provider }}"
+          lines:
+             - ip add "{{ item.ip_addr }}"
+             - desc "{{ item.desc }}"
+          parents:
+             - - int "{{ item.int }}"
+       with_items: "{{ r1_ospfBasicConfig }}"
+
+
+
+
+     - name: Task no.04 Config OSPF on r1 & r2 with process ID 11
+       with_items: "{{ r1_ospfBasicConfig }}"
+       ios_config:
+          provider: "{{ r1_provider }}"
+          lines:
+             - networks "{{ advNet00 }}" 0.0.0.0 area 0
+             - networks "{{ advNet01 }}" 0.0.0.0 area 0
+             - networks "{{ advNet02 }}" 0.0.0.0 area 0
+          parents:
+             - router ospf 11
+
+
+
+- name: Play no.02 Config OSPF on r2 & advertise its networks
+  hosts: r2
+  connection: local
+  gather_facts: no
+
+
+
+  tasks:
+     - name: Task no.03 Config Loopback Interface on r2
+       with_items: "{{ r2_ospfBasicConfig }}"
+       ios_config:
+          provider: "{{ r2_provider }}"
+          lines:
+             - ip add "{{ item.ip_addr }}"
+             - desc "{{ item.desc }}"
+          parents:
+             - int "{{ item.int }}"
+
+
+
+     - name: Task no.04 Config OSPF on r1 & r2 with process ID 11
+       with_items: "{{ r2_ospfBasicConfig }}"
+       ios_config:
+          provider: "{{ r2_provider }}"
+          lines:
+             - networks "{{ advNet00 }}" 0.0.0.0 area 0
+             - networks "{{ advNet01 }}" 0.0.0.0 area 0
+             - networks "{{ advNet02 }}" 0.0.0.0 area 0
+          parents:
+             - router ospf 11

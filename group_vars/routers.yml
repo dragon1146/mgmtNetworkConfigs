@@ -1,0 +1,17 @@
+---
+
+r1_provider:
+  host: r1
+  authorize: yes
+  auth_pass: cisco12345
+  username: tison
+  password: cisco12345
+
+
+
+r2_provider:
+  host: r2
+  authorize: yes
+  auth_pass: cisco12345
+  username: tison
+  password: cisco12345

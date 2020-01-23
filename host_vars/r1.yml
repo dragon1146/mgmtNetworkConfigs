@@ -1,0 +1,31 @@
+---
+
+
+
+r1_provider:
+   host: r1
+   authorize: yes
+   auth_pass: cisco12345
+   username: tison
+   password: cisco12345
+
+
+
+r1_ospfBasicConfig:
+   - int: loopback 1
+     ip_addr: 10.100.1.1 255.255.255.0
+     desc: description for loopback 1
+
+
+
+   - name: interface loopback 1 config info # ospfBasicConfig sub-object no.02
+     int: loopback 2
+     ip_addr: 10.100.2.1 255.255.255.0
+     desc: description for loopback 2
+
+
+
+ospfConfigInfo:
+   advNet00: 10.100.1.1
+   advNet01: 10.100.2.1
+   advNet02: 172.16.11.1
