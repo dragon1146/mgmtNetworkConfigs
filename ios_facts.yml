@@ -3,7 +3,7 @@
 
 
 - name: Play 01 get info from router by using ios_facts
-  hosts: usb1ab6secrtr1
+  hosts: ctrtrbush
   connection: local
   gather_facts: no
 
@@ -11,21 +11,29 @@
     cli:
       username: stison
       password: colourfulHoney46$
-      host: usb1ab6secrtr1
+      host: ctrtrbush
   
   
   
   tasks:
-    - name: Task 01 using ios_facts module to get info from router
-      ios_facts:
-        provider: "{{ cli }}"
-      register: data
+  #   - name: Task 01 using ios_facts module to get info from router
+  #     ios_facts:
+  #       provider: "{{ cli }}"
+  #     register: data
 
 
-    - name: Task 02 display router info using debug module
-      debug:
-        var: data
+  #   - name: Task 02 display router info using debug module
+  #     debug:
+  #       var: data
 
+
+
+    - name: Task 03 clear counters on gi0/2
+      ios_command:
+        commands:
+           - command: 'clear counters g0/2'
+             prompt: 'Clear \"show interface\" counters on this interface \[confirm\]'
+             answer: "\r"
 
 
 
