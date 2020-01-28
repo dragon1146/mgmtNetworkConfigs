@@ -3,7 +3,7 @@
 
 
 - name: Play 01 get info from router by using ios_facts
-  hosts: ctrtrbush
+  hosts: usb1ab6secrtr1
   connection: local
   gather_facts: no
 
@@ -11,8 +11,9 @@
     cli:
       username: stison
       password: colourfulHoney46$
-      host: ctrtrbush
-  
+      host: usb1ab6secrtr1
+    ansible_command_timeout: 1200
+    iosFileName: testfile01.txt
   
   
   tasks:
@@ -28,15 +29,40 @@
 
 
 
-    - name: Task 03 clear counters on gi0/2
+    - name: Task 03 copy testfile.txt from flash to 10.200.0.46
       ios_command:
+        provider: "{{ cli }}"
         commands:
-           - command: 'clear counters g0/2'
-             prompt: 'Clear \"show interface\" counters on this interface \[confirm\]'
-             answer: "\r"
+          - command: 'copy tftp://10.200.0.46/{{ iosFileName }} flash:'
+            prompt:  
+              - "{{ iosFileName }}"
+              # - 'Address or name of remote host'
+              # - 'Destination filename'
+            answer:
+              - "\r"
+              # - '10.200.0.46'
+              # - 'testfile01.txt'
 
+    # - name: Task 05 copy IOS from av6 pt rtr to 10.200.0.46
+    #   cli_command:        
+    #     command: 'copy flash: tftp'
+    #     check_all: True
+    #     prompt:
+    #       - 'Source filename'
+    #       - 'Address or name of remote host'
+    #       - 'Destination filename'
 
-
+    #     answer: 
+    #       - 'testfile.txt'
+    #       - '10.200.0.46'
+    #       - 'testfile.txt'
+              
+            #  prompt: '[]'
+            #  prompt: '[]'
+            #  prompt: '[]'
+            #  answer: "XPedite5205-IOS-1-15.7.3.M1.bin"
+            #  answer: "10.200.0.46"
+            #  answer: "\r"
       #  ios_facts:
       #     provider:
       #        host: 172.16.11.11
@@ -53,7 +79,8 @@
 #           var: ios_facts_data    
 
 
-
+# provider: "{{ cli }}"
+#         commands:
 
 
    
