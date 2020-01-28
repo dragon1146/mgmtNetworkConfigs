@@ -1,0 +1,76 @@
+---
+
+
+
+- name: Play 01 verify that a router has updated IOS, if not upgrade router, change boot system command then reboot
+  hosts: usb1ab6secrtr1, usb1ab6secrtr2 
+  connection: local
+  gather_facts: no
+
+
+
+  vars:
+    cli:
+      username: stison
+      password: colourfulHoney46$
+      host: "{{inventory_hostname}}"
+    ansible_command_timeout: 1200
+    iosShortName: 15.7(3)M1
+    iosFileName: XPedite5205-IOS-1-15.7.3.M1.bin
+  
+
+
+  tasks:
+    - name: gather facts on the routers
+      ios_facts:
+        provider: "{{ cli }}"
+
+
+
+    - name: upgrade ios to latest if needed after verifying current  ios version
+      block:
+        - name: copy latest ios from tftp to flash
+          ios_command:
+            provider: "{{ cli }}"
+            commands:
+              - command: 'copy tftp://10.200.0.46/{{ iosFileName }} flash:'
+                prompt:  
+                  - "{{ iosFileName }}"
+                answer:
+                  - "\r"
+        # - name: COPY OVER IOS IMAGE
+        #   command: "scp system-image-filename.bin {{inventory_hostname}}:/system-image-filename.bin"
+
+        - name: SET BOOT SYSTEM FLASH
+          ios_config:
+            commands:
+              - 'boot system flash:{{ iosFileName }}'
+
+        - name: REBOOT ROUTER
+          ios_command:
+            commands:
+              - "reload\r"
+
+        - name: WAIT FOR ROUTER TO RETURN
+          wait_for:
+            host: "{{inventory_hostname}}"
+            port: 22
+            delay: 60
+          delegate_to: localhost
+
+      when: ansible_net_version != iosShortName
+
+    - name: GATHER ROUTER FACTS FOR VERIFICATION
+      ios_facts:
+        provider: "{{ cli }}"
+
+    - name: ASSERT THAT THE IOS VERSION IS CORRECT
+      assert:
+        that:
+          - iosShortName == ansible_net_version
+
+    - name: show the current ios version on router
+      debug:
+        var: ansible_net_version
+
+
