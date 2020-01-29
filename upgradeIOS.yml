@@ -14,7 +14,6 @@
       username: stison
       password: colourfulHoney46$
       host: "{{inventory_hostname}}"
-    ansible_command_timeout: 1200
     iosShortName: 15.7(3)M1
     iosFileName: XPedite5205-IOS-1-15.7.3.M1.bin
   
@@ -29,7 +28,7 @@
 
     - name: upgrade ios to latest if needed after verifying current  ios version
       block:
-        - name: copy latest ios from tftp to flash
+        - name: copy latest ios from tftp to router flash
           ios_command:
             provider: "{{ cli }}"
             commands:
@@ -38,12 +37,14 @@
                   - "{{ iosFileName }}"
                 answer:
                   - "\r"
+            timeout: 1800
         # - name: COPY OVER IOS IMAGE
         #   command: "scp system-image-filename.bin {{inventory_hostname}}:/system-image-filename.bin"
 
         - name: SET BOOT SYSTEM FLASH
           ios_config:
             commands:
+              - 'boot system flash:XPedite5205-IOS-1-15.6.2.T3.bin'
               - 'boot system flash:{{ iosFileName }}'
 
         - name: REBOOT ROUTER

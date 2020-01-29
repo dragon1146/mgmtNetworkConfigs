@@ -1,0 +1,33 @@
+---
+
+
+- name: Play 01 verify that commands to copy file from tftp to flash works
+  hosts: usb1ab6secrtr2
+  connection: local
+  gather_facts: no
+
+
+
+  vars:
+    cli:
+      username: stison
+      password: colourfulHoney46$
+      host: "{{inventory_hostname}}"
+    iosShortName: 15.7(3)M1
+    iosFileName: XPedite5205-IOS-1-15.7.3.M1.bin
+  
+
+
+  tasks:
+    - name: verify that commands to copy file from tftp to flash works
+      ios_command:
+        provider: "{{ cli }}"
+        commands:
+          - command: 'copy tftp://10.200.0.46/{{ iosFileName }} flash:'
+            prompt:  
+              - "{{ iosFileName }}"
+            answer:
+              - "\r"
+        timeout: 1800
+      # vars: 
+      #   ansible_command_timeout: 1800
