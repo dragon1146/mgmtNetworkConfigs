@@ -1,8 +1,8 @@
 ---
 
 
-- name: Play 01 verify that commands to copy file from tftp to flash works
-  hosts: usb1ab6secrtr2
+- name: Play 01 copy new ios on av6 flash and verify authenticity
+  hosts: usb1ab6secrtr1
   connection: local
   gather_facts: no
 
@@ -18,8 +18,8 @@
   
 
 
-  tasks:
-    - name: verify that commands to copy file from tftp to flash works
+  tasks:    
+    - name: upgrade ios to latest if needed after verifying current  ios version
       ios_command:
         provider: "{{ cli }}"
         commands:
@@ -28,6 +28,51 @@
               - "{{ iosFileName }}"
             answer:
               - "\r"
-        timeout: 1800
-      # vars: 
-      #   ansible_command_timeout: 1800
+        timeout: 3200
+
+
+    
+    - name: verify signature of the ios
+      ios_command:
+        provider: "{{ cli }}"
+        commands:
+          - 'show software authenticity file flash:{{ iosFileName }}'
+      register: sigData
+
+
+    - name: display value of sigData
+      debug:
+        var: sigData.stdout_lines
+
+# - name: SET BOOT SYSTEM FLASH
+    #   ios_config:
+    #     provider: "{{ cli }}" 
+    #     lines:
+    #       - 'no boot system flash:XPedite5205-IOS-1-15.6.2.T3.bin'
+    #       - 'boot system flash:{{ iosFileName }}'
+    #     after: 'do wr'
+
+    # - name: REBOOT ROUTER
+    #   ios_command:
+    #     provider: "{{ cli }}"
+    #     commands:
+    #       - command: 'reload'
+    #         prompt:
+    #           - '[confirm]'
+    #         answer:
+    #           - "\r"
+
+    # - name: WAIT FOR ROUTER TO RETURN
+    #   wait_for:
+    #     host: "{{inventory_hostname}}"
+    #     port: 22
+    #     delay: 120
+    #   delegate_to: localhost
+
+    # - name: GATHER ROUTER FACTS FOR VERIFICATION
+    #   ios_facts:
+    #     provider: "{{ cli }}"
+
+    # - name: show the current ios version on router
+    #   debug:
+    #     var: ansible_net_version

@@ -3,7 +3,7 @@
 
 
 - name: Play 01 verify that a router has updated IOS, if not upgrade router, change boot system command then reboot
-  hosts: usb1ab6secrtr1, usb1ab6secrtr2 
+  hosts: usb1ab6secrtr1 
   connection: local
   gather_facts: no
 
@@ -26,40 +26,48 @@
 
 
 
-    - name: upgrade ios to latest if needed after verifying current  ios version
-      block:
-        - name: copy latest ios from tftp to router flash
-          ios_command:
-            provider: "{{ cli }}"
-            commands:
-              - command: 'copy tftp://10.200.0.46/{{ iosFileName }} flash:'
-                prompt:  
-                  - "{{ iosFileName }}"
-                answer:
-                  - "\r"
-            timeout: 1800
+    # - name: upgrade ios to latest if needed after verifying current  ios version
+    #   block:
+    #     - name: copy latest ios from tftp to router flash
+    #       ios_command:
+    #         provider: "{{ cli }}"
+    #         commands:
+    #           - command: 'copy tftp://10.200.0.46/{{ iosFileName }} flash:'
+    #             prompt:  
+    #               - "{{ iosFileName }}"
+    #             answer:
+    #               - "\r"
+    #         timeout: 1800
         # - name: COPY OVER IOS IMAGE
         #   command: "scp system-image-filename.bin {{inventory_hostname}}:/system-image-filename.bin"
 
-        - name: SET BOOT SYSTEM FLASH
-          ios_config:
-            commands:
-              - 'boot system flash:XPedite5205-IOS-1-15.6.2.T3.bin'
-              - 'boot system flash:{{ iosFileName }}'
+    - name: SET BOOT SYSTEM FLASH
+      ios_config:
+        provider: "{{ cli }}"
+        commands:
+          - 'no boot system flash:XPedite5205-IOS-1-15.6.2.T3.bin'
+          - 'boot system flash:{{ iosFileName }}'
+          - 'do wr'
 
-        - name: REBOOT ROUTER
-          ios_command:
-            commands:
-              - "reload\r"
+    - name: REBOOT ROUTER
+      ios_command:
+        provider: "{{ cli }}"
+        commands:
+          - command: 'reload'
+            prompt:
+              - '[confirm]'
+            answer:
+              - "\r"
 
-        - name: WAIT FOR ROUTER TO RETURN
-          wait_for:
-            host: "{{inventory_hostname}}"
-            port: 22
-            delay: 60
-          delegate_to: localhost
 
-      when: ansible_net_version != iosShortName
+    - name: WAIT FOR ROUTER TO RETURN
+      wait_for:
+        host: "{{inventory_hostname}}"
+        port: 22
+        delay: 60
+      delegate_to: localhost
+
+      # when: ansible_net_version != iosShortName
 
     - name: GATHER ROUTER FACTS FOR VERIFICATION
       ios_facts:

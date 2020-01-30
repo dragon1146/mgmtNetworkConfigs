@@ -1,0 +1,98 @@
+---
+
+
+
+
+
+
+
+- name: Play 01 verify conx, authentication & based on results save hostname in 1 of 3 files (failedAuthen), (timeoutAuthen) & (successfulAuthen)
+  hosts: authenTest
+  connection: local
+  gather_facts: no
+
+  vars:
+    cli:
+      username: stison
+      password: colourfulHoney46$rdexserz
+      host: "{{inventory_hostname}}"
+    # ansible_command_timeout: 1200
+    # iosFileName: testfile08.txt
+
+
+
+
+  tasks:
+
+
+    - name: Task 03 copy testfile08.txt from flash to 10.200.0.46
+      ios_command:
+        provider: "{{ cli }}"
+        commands: 'exit'
+        timeout: 60
+      register: {{ inventory_hostname }}authenData
+      ignore_errors: yes
+
+      # debug:
+      #   var: authenData
+
+      # lineinfile:
+      #   path: ./failedAuthen
+      #   line: "{{ inventory_hostname }}"
+      #   state: present
+      #   create: yes
+      #   backup: yes
+      # when: authenData.find('failed to authenticate') != -1
+      # ignore_errors: yes
+
+      # lineinfile:
+      #   path: ./timeoutAuthen
+      #   line: "{{ inventory_hostname }}"
+      #   state: present
+      #   create: yes
+      #   backup: yes
+      # when: authenData.find('timeout') != -1
+      # ignore_errors: yes
+
+      # lineinfile:
+      #   path: ./sucessfulAuthen
+      #   line: "{{ inventory_hostname }}"
+      #   state: present
+      #   create: yes
+      #   backup: yes
+      # when: authenData.stdout_lines.find('succes') != -1    
+    
+    
+    
+    # - name: Task 03 append hostname to file  if it fails authentication
+    #   lineinfile:
+    #     path: ./failedAuthen
+    #     line: "{{ inventory_hostname }}"
+    #     state: present
+    #     create: yes
+    #     backup: yes
+    #   when: authenData.find('failed to authenticate') != -1
+    #   ignore_errors: yes
+
+
+    # - name: Task 04 append hostname to file  if it timeout during authentication
+    #   lineinfile:
+    #     path: ./timeoutAuthen
+    #     line: "{{ inventory_hostname }}"
+    #     state: present
+    #     create: yes
+    #     backup: yes
+    #   when: authenData.find('timeout') != -1
+    #   ignore_errors: yes
+
+
+    # - name: Task 05 append hostname to file  if it passed authentication
+    #   lineinfile:
+    #     path: ./sucessfulAuthen
+    #     line: "{{ inventory_hostname }}"
+    #     state: present
+    #     create: yes
+    #     backup: yes
+    #   when: authenData.stdout_lines.find('succes') != -1
+
+

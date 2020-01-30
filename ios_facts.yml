@@ -3,7 +3,7 @@
 
 
 - name: Play 01 get info from router by using ios_facts
-  hosts: usb1ab6secrtr1
+  hosts: av6Routers
   connection: local
   gather_facts: no
 
@@ -11,9 +11,9 @@
     cli:
       username: stison
       password: colourfulHoney46$
-      host: usb1ab6secrtr1
+      host: "{{inventory_hostname}}"
     ansible_command_timeout: 1200
-    iosFileName: testfile01.txt
+    iosFileName: testfile08.txt
   
   
   tasks:
@@ -29,7 +29,7 @@
 
 
 
-    - name: Task 03 copy testfile.txt from flash to 10.200.0.46
+    - name: Task 03 copy testfile08.txt from flash to 10.200.0.46
       ios_command:
         provider: "{{ cli }}"
         commands:
