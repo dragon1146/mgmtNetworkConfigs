@@ -23,7 +23,7 @@
       ios_command:
         provider: "{{ cli }}"
         commands:
-          - command: 'copy tftp://10.200.0.46/{{ iosFileName }} flash:'
+          - command: 'copy tftp://10.200.18.3/{{ iosFileName }} flash:'
             prompt:  
               - "{{ iosFileName }}"
             answer:

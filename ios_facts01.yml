@@ -1,0 +1,38 @@
+
+# - name: Play 01 get info from router by using ios_facts
+- hosts: av6Routers
+  connection: local
+  gather_facts: no
+
+  vars:
+    cli:
+      username: stison
+      password: colourfulHoney46$
+      host: "{{inventory_hostname}}"
+    # ansible_command_timeout: 1200
+    # iosFileName: testfile08.txt
+  
+  
+  tasks:
+    block:
+      - name: Task 01 using ios_facts module to get info from router
+        ios_facts:
+          provider: "{{ cli }}"
+        # register: data
+
+
+      - name: task 01.1 append inventory_hostname to fileA when ansible_net_hostname matches U-SB2-AV4-SEC-RTR-1
+        lineinfile:
+          path: ./fileA
+          line: "{{ inventory_hostname }}"
+          state: present
+          create: yes
+        when: ansible_net_hostname == 'U-SB2-AV4-SEC-RTR-1'
+
+      - name: task 01.2 append inventory_hostname to fileB when ansible_net_hostname matches U-SB2-AV4-SEC-RTR-2
+        lineinfile:
+          path: ./fileA
+          line: "{{ inventory_hostname }}"
+          state: present
+          create: yes
+        when: ansible_net_hostname == 'U-SB2-AV4-SEC-RTR-2'

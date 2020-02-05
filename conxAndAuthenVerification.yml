@@ -6,15 +6,21 @@
 
 
 
+
+
+
 - name: Play 01 verify conx, authentication & based on results save hostname in 1 of 3 files (failedAuthen), (timeoutAuthen) & (successfulAuthen)
-  hosts: authenTest
+  hosts: labDevices
+
+  #this line of code (LOC) instructs ansible to run all the tasks on  the group of devices one host at a time
+  serial: 1
   connection: local
   gather_facts: no
 
   vars:
     cli:
       username: stison
-      password: colourfulHoney46$rdexserz
+      password: colourfulHoney46$
       host: "{{inventory_hostname}}"
     # ansible_command_timeout: 1200
     # iosFileName: testfile08.txt
@@ -25,74 +31,58 @@
   tasks:
 
 
-    - name: Task 03 copy testfile08.txt from flash to 10.200.0.46
+    - name: Task 1 verify authen by logging into device then logging off
       ios_command:
         provider: "{{ cli }}"
         commands: 'exit'
-        timeout: 60
-      register: {{ inventory_hostname }}authenData
+        #timeout: 60
+      register: resultsData
       ignore_errors: yes
 
-      # debug:
-      #   var: authenData
-
-      # lineinfile:
-      #   path: ./failedAuthen
-      #   line: "{{ inventory_hostname }}"
-      #   state: present
-      #   create: yes
-      #   backup: yes
-      # when: authenData.find('failed to authenticate') != -1
-      # ignore_errors: yes
-
-      # lineinfile:
-      #   path: ./timeoutAuthen
-      #   line: "{{ inventory_hostname }}"
-      #   state: present
-      #   create: yes
-      #   backup: yes
-      # when: authenData.find('timeout') != -1
-      # ignore_errors: yes
-
-      # lineinfile:
-      #   path: ./sucessfulAuthen
-      #   line: "{{ inventory_hostname }}"
-      #   state: present
-      #   create: yes
-      #   backup: yes
-      # when: authenData.stdout_lines.find('succes') != -1    
-    
-    
-    
-    # - name: Task 03 append hostname to file  if it fails authentication
-    #   lineinfile:
-    #     path: ./failedAuthen
-    #     line: "{{ inventory_hostname }}"
-    #     state: present
-    #     create: yes
-    #     backup: yes
-    #   when: authenData.find('failed to authenticate') != -1
-    #   ignore_errors: yes
+    - name: Task 2 append hostname to file failedAuthen when authentication fails
+      lineinfile:
+        # this BOC instrust ansible to write the name of the devices that fails authen in a file "failedAuthen"
+          # it will append the name of the device to the file
+        path: /home/stison/Desktop/ansibleRelated/mgmtNetworkConfigs/failedAuthen
+        line: "{{ inventory_hostname }}"
+        
+        # this LOC tells ansible to ensure that the value to the "line" key is present in the file; if not append the value to the end of the file
+        state: present
+        
+        # the property create: yes instructs ansible to create the file if it is not present
+        create: yes
+        
+        # the backup: yes instructs ansible to create a backup of the before appending the hostname of the device in the event that something goes wrong while writting to it
+        backup: yes
+      
+      # the when statement is ansible conditional statement that instruct ansible to do the BOC above the when statement if the value of the when statement is true
+          # in this case the string "Failed to authenticate" must be present in the "msg" section of the variable "resultsData"
+      when: resultsData.msg.find('Failed to authenticate') != -1
+      ignore_errors: yes
 
 
-    # - name: Task 04 append hostname to file  if it timeout during authentication
-    #   lineinfile:
-    #     path: ./timeoutAuthen
-    #     line: "{{ inventory_hostname }}"
-    #     state: present
-    #     create: yes
-    #     backup: yes
-    #   when: authenData.find('timeout') != -1
-    #   ignore_errors: yes
+    - name: Task 1.2 append hostname to file timeoutAuthen when authentication timeouts
+      lineinfile:
+        path: /home/stison/Desktop/ansibleRelated/mgmtNetworkConfigs/timeoutAuthen
+        line: "{{ inventory_hostname }}"
+        state: present
+        create: yes
+        backup: yes
 
+      # the when statement is ansible conditional statement that instruct ansible to do the BOC above the when statement if the value of the when statement is true
+          # in this case the string "timed out" must be present in the "msg" section of the variable "resultsData"  
+      when: resultsData.msg.find('timed out') != -1
+      ignore_errors: yes
 
-    # - name: Task 05 append hostname to file  if it passed authentication
-    #   lineinfile:
-    #     path: ./sucessfulAuthen
-    #     line: "{{ inventory_hostname }}"
-    #     state: present
-    #     create: yes
-    #     backup: yes
-    #   when: authenData.stdout_lines.find('succes') != -1
+      
+    - name: Task 1.3 append hostname to file successfulAuthen when authentication is successful  
+      lineinfile:
+        path: /home/stison/Desktop/ansibleRelated/mgmtNetworkConfigs/sucessfulAuthen
+        line: "{{ inventory_hostname }}"
+        state: present
+        create: yes
+        backup: yes
 
-
+      # the when statement is ansible conditional statement that instruct ansible to do the BOC above the when statement if the value of the when statement is true
+          # in this case the condition will be true if the task that stored its results in "resultsData" was successful
+      when: resultsData is succeeded

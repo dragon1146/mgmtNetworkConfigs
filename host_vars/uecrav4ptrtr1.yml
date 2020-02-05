@@ -1,0 +1,6 @@
+---
+
+provider:
+  username: stison
+  password: colourfulHoney46$
+  #host: "{{inventory_hostname}}"

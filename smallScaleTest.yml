@@ -1,0 +1,66 @@
+---
+
+
+
+
+
+
+- name: Play 01 test
+  hosts: uecrav4ptrtr2
+  connection: local
+  serial: 1
+  gather_facts: no
+
+  vars:
+    cli:
+      username: stison
+      password: colourfulHoney46$
+      host: "{{inventory_hostname}}"
+  #   # ansible_command_timeout: 1200
+  #   # iosFileName: testfile08.txt
+  
+  
+  tasks:
+    - name: Task 01 verify authen by logging into device then logging off
+      ios_command:
+        provider: "{{ cli }}"
+        commands: 'exit'
+        timeout: 60
+      register: resultsData
+      ignore_errors: yes
+      
+    - name: display resultsData
+      debug:
+        var: resultsData
+      
+  
+
+    # - name: Task 01.3 append hostname to file successfulAuthen when authentication is successful  
+    #   lineinfile:
+    #     path: /home/stison/Desktop/ansibleRelated/mgmtNetworkConfigs/failedAuthen
+    #     line: "{{ inventory_hostname }}"
+    #     state: present
+    #     create: yes
+    #     backup: yes
+    #   when: authenData.msg.find('Failed') != -1
+      # debug:
+      #   var: authenData
+    
+              
+        
+        
+        # - name: task 01.1 append inventory_hostname to fileA when ansible_net_hostname matches U-SB2-AV4-SEC-RTR-1
+        #   lineinfile:
+        #     path: ./fileA
+        #     line: "{{ inventory_hostname }}"
+        #     state: present
+        #     create: yes
+        #   when: ansible_net_hostname == 'U-SB2-AV4-SEC-RTR-1'
+
+        # - name: task 01.2 append inventory_hostname to fileB when ansible_net_hostname matches U-SB2-AV4-SEC-RTR-2
+        #   lineinfile:
+        #     path: ./fileB
+        #     line: "{{ inventory_hostname }}"
+        #     state: present
+        #     create: yes
+        #   when: ansible_net_hostname == 'U-SB2-AV4-SEC-RTR-2'
